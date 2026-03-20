@@ -36,6 +36,20 @@ struct HomeView: View {
                 .padding(.vertical)
             }
             .navigationTitle("Главная")
+            .overlay(alignment: .top) {
+                LinearGradient(
+                    colors: [
+                        Color.red.opacity(0.9),
+                        Color.yellow.opacity(0.6),
+                        Color.clear
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 120)
+                .ignoresSafeArea(edges: .top)
+            }
+
         }
     }
 }
