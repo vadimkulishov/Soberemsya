@@ -8,4 +8,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(AuthManager.shared)
+        .environmentObject(ThemeManager.shared)
 }

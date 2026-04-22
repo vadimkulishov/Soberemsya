@@ -6,11 +6,45 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6C31AACB2F926F0D00DDA862 /* Soberemsya Watch App Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6C31AAC12F926F0B00DDA862 /* Soberemsya Watch App Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6C31AAC92F926F0D00DDA862 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94FF2E912F6CAF78000A86B3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6C31AAC02F926F0B00DDA862;
+			remoteInfo = "Soberemsya Watch App Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6C31AACF2F926F0D00DDA862 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				6C31AACB2F926F0D00DDA862 /* Soberemsya Watch App Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6C31AAC12F926F0B00DDA862 /* Soberemsya Watch App Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Soberemsya Watch App Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FF2E992F6CAF78000A86B3 /* Soberemsya.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Soberemsya.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6C31AAC22F926F0C00DDA862 /* Soberemsya Watch App Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Soberemsya Watch App Watch App";
+			sourceTree = "<group>";
+		};
 		94FF2E9B2F6CAF78000A86B3 /* Soberemsya */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Soberemsya;
@@ -19,6 +53,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6C31AABE2F926F0B00DDA862 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		94FF2E962F6CAF78000A86B3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				94FF2E9B2F6CAF78000A86B3 /* Soberemsya */,
+				6C31AAC22F926F0C00DDA862 /* Soberemsya Watch App Watch App */,
 				94FF2E9A2F6CAF78000A86B3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				94FF2E992F6CAF78000A86B3 /* Soberemsya.app */,
+				6C31AAC12F926F0B00DDA862 /* Soberemsya Watch App Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +91,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6C31AAC02F926F0B00DDA862 /* Soberemsya Watch App Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6C31AACC2F926F0D00DDA862 /* Build configuration list for PBXNativeTarget "Soberemsya Watch App Watch App" */;
+			buildPhases = (
+				6C31AABD2F926F0B00DDA862 /* Sources */,
+				6C31AABE2F926F0B00DDA862 /* Frameworks */,
+				6C31AABF2F926F0B00DDA862 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6C31AAC22F926F0C00DDA862 /* Soberemsya Watch App Watch App */,
+			);
+			name = "Soberemsya Watch App Watch App";
+			packageProductDependencies = (
+			);
+			productName = "Soberemsya Watch App Watch App";
+			productReference = 6C31AAC12F926F0B00DDA862 /* Soberemsya Watch App Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		94FF2E982F6CAF78000A86B3 /* Soberemsya */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 94FF2EA42F6CAF7A000A86B3 /* Build configuration list for PBXNativeTarget "Soberemsya" */;
@@ -55,10 +120,12 @@
 				94FF2E952F6CAF78000A86B3 /* Sources */,
 				94FF2E962F6CAF78000A86B3 /* Frameworks */,
 				94FF2E972F6CAF78000A86B3 /* Resources */,
+				6C31AACF2F926F0D00DDA862 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6C31AACA2F926F0D00DDA862 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				94FF2E9B2F6CAF78000A86B3 /* Soberemsya */,
@@ -77,9 +144,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
-				LastUpgradeCheck = 2630;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					6C31AAC02F926F0B00DDA862 = {
+						CreatedOnToolsVersion = 26.4;
+					};
 					94FF2E982F6CAF78000A86B3 = {
 						CreatedOnToolsVersion = 26.3;
 					};
@@ -100,11 +170,19 @@
 			projectRoot = "";
 			targets = (
 				94FF2E982F6CAF78000A86B3 /* Soberemsya */,
+				6C31AAC02F926F0B00DDA862 /* Soberemsya Watch App Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6C31AABF2F926F0B00DDA862 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		94FF2E972F6CAF78000A86B3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +193,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6C31AABD2F926F0B00DDA862 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		94FF2E952F6CAF78000A86B3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +209,81 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6C31AACA2F926F0D00DDA862 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6C31AAC02F926F0B00DDA862 /* Soberemsya Watch App Watch App */;
+			targetProxy = 6C31AAC92F926F0D00DDA862 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		6C31AACD2F926F0D00DDA862 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G76C832YG2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Soberemsya Watch App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.execute.Soberemsya;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.execute.Soberemsya.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Debug;
+		};
+		6C31AACE2F926F0D00DDA862 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G76C832YG2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Soberemsya Watch App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.execute.Soberemsya;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.execute.Soberemsya.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Release;
+		};
 		94FF2EA22F6CAF7A000A86B3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -184,6 +343,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -241,6 +401,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -255,13 +416,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G76C832YG2;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Соберёмся?";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -289,13 +445,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G76C832YG2;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Соберёмся?";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -317,6 +468,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6C31AACC2F926F0D00DDA862 /* Build configuration list for PBXNativeTarget "Soberemsya Watch App Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6C31AACD2F926F0D00DDA862 /* Debug */,
+				6C31AACE2F926F0D00DDA862 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		94FF2E942F6CAF78000A86B3 /* Build configuration list for PBXProject "Soberemsya" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

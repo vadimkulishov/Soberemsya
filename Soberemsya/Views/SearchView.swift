@@ -1,33 +1,170 @@
 import SwiftUI
 
+/// Экран поиска в стиле Apple Health
 struct SearchView: View {
-    @State private var query: String = ""
+    @Environment(\.colorScheme) var colorScheme
+    @StateObject private var viewModel = SearchViewModel()
+    @State private var selectedCategory: EventCategory? = nil
+    @State private var categoriesAppeared = false
     
-    // Пример данных для поиска
-    let items = [
-        "SwiftUI",
-        "UIKit",
-        "Combine",
-        "CoreData",
-        "ARKit",
-        "MapKit",
-        "Swift Concurrency",
-        "Machine Learning",
-        "iOS 26 Features"
+    let columns = [
+        GridItem(.flexible(), spacing: DesignConstants.spacing),
+        GridItem(.flexible(), spacing: DesignConstants.spacing)
     ]
-    
-    var filteredItems: [String] {
-        if query.isEmpty { return items }
-        return items.filter { $0.localizedCaseInsensitiveContains(query) }
-    }
     
     var body: some View {
         NavigationStack {
-            List(filteredItems, id: \.self) { item in
-                Text(item)
+            ZStack {
+                DesignConstants.Colors.mainBackground(colorScheme: colorScheme).ignoresSafeArea()
+                
+                ScrollView(showsIndicators: false) {
+                    LazyVGrid(columns: columns, spacing: DesignConstants.spacing) {
+                        ForEach(Array(EventCategory.allCategories.enumerated()), id: \.element.id) { index, category in
+                            Button(action: {
+                                selectedCategory = category
+                            }) {
+                                CategoryCardComponent(category: category)
+                            }
+                            .buttonStyle(PressableCardButtonStyle(pressedScale: 0.96))
+                            .opacity(categoriesAppeared ? 1 : 0)
+                            .offset(y: categoriesAppeared ? 0 : 20)
+                            .animation(
+                                .spring(response: 0.4, dampingFraction: 0.75)
+                                    .delay(Double(index) * 0.05),
+                                value: categoriesAppeared
+                            )
+                        }
+                    }
+                    .padding(DesignConstants.padding)
+                    .onAppear {
+                        if !categoriesAppeared {
+                            categoriesAppeared = true
+                        }
+                    }
+                }
             }
-            .navigationTitle("Поиск")
-            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
+            .navigationTitle("Категории")
+            .navigationBarTitleDisplayMode(.large)
+            .navigationDestination(item: $selectedCategory) { category in
+                CategoryDetailView(category: category)
+            }
+            .searchable(text: $viewModel.query, prompt: "Поиск категорий")
+            .onChange(of: viewModel.query) {
+                viewModel.updateFilteredCategories()
+            }
         }
     }
+}
+
+// MARK: - Category Detail View (обновлённый)
+struct CategoryDetailView: View {
+    @Environment(\.colorScheme) var colorScheme
+    let category: EventCategory
+    
+    @ObservedObject var eventService = EventService.shared
+    
+    var categoryColor: Color {
+        Color(hex: category.color)
+    }
+    
+    var body: some View {
+        ZStack {
+            DesignConstants.Colors.mainBackground(colorScheme: colorScheme).ignoresSafeArea()
+            
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: DesignConstants.sectionSpacing) {
+                    // Карточка категории
+                    VStack(spacing: DesignConstants.padding) {
+                        // Иконка
+                        ZStack {
+                            Circle()
+                                .fill(categoryColor.opacity(0.15))
+                                .frame(width: 100, height: 100)
+                            
+                            Image(systemName: category.icon)
+                                .font(.system(size: 44, weight: .medium))
+                                .foregroundColor(categoryColor)
+                        }
+                        
+                        // Название
+                        Text(category.title)
+                            .font(DesignConstants.Typography.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(DesignConstants.Colors.textPrimary)
+                        
+                        // Описание
+                        Text("Мероприятия категории \(category.title)")
+                            .font(DesignConstants.Typography.subheadline)
+                            .foregroundColor(DesignConstants.Colors.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(DesignConstants.largePadding)
+                    .background(DesignConstants.Colors.cardBackground(colorScheme: colorScheme))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignConstants.cornerRadius, style: .continuous))
+                    .shadow(
+                        color: DesignConstants.Shadows.card.color,
+                        radius: DesignConstants.Shadows.card.radius,
+                        x: DesignConstants.Shadows.card.x,
+                        y: DesignConstants.Shadows.card.y
+                    )
+                    .padding(DesignConstants.padding)
+                    
+                    // События этой категории
+                    VStack(alignment: .leading, spacing: DesignConstants.spacing) {
+                        Text("События")
+                            .font(DesignConstants.Typography.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(DesignConstants.Colors.textPrimary)
+                            .padding(.horizontal, DesignConstants.padding)
+                        
+                        if eventService.isLoading {
+                            // Loading skeleton
+                            VStack(spacing: DesignConstants.spacing) {
+                                ForEach(0..<3, id: \.self) { _ in
+                                    SkeletonEventCard()
+                                }
+                            }
+                            .padding(.horizontal, DesignConstants.padding)
+                        } else if eventService.filteredEvents.isEmpty {
+                            // Empty state
+                            VStack(spacing: 12) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 44, weight: .light))
+                                    .foregroundColor(DesignConstants.Colors.textSecondary)
+                                
+                                Text("Нет событий")
+                                    .font(DesignConstants.Typography.headline)
+                                    .foregroundColor(DesignConstants.Colors.textPrimary)
+                                
+                                Text("В эту категорию пока не добавлено мероприятий")
+                                    .font(DesignConstants.Typography.subheadline)
+                                    .foregroundColor(DesignConstants.Colors.textSecondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 40)
+                        } else {
+                            // Display events
+                            VStack(spacing: DesignConstants.padding) {
+                                ForEach(eventService.filteredEvents) { event in
+                                    EventCardComponent(event: event)
+                                }
+                            }
+                            .padding(.horizontal, DesignConstants.padding)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle(category.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            eventService.loadEventsByCategory(category.title)
+        }
+    }
+}
+
+#Preview {
+    SearchView()
 }
