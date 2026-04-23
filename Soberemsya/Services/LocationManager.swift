@@ -15,6 +15,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     private let manager = CLLocationManager()
     private let cityService = CityService.shared
+    private let geocoder = CLGeocoder()
     private var hasLoaded = false
     
     override init() {
@@ -150,31 +151,48 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     // MARK: - Reverse Geocoding
     
     private func reverseGeocodeLocation(_ location: CLLocation) {
-        guard let request = MKReverseGeocodingRequest(location: location) else {
-            DispatchQueue.main.async {
-                self.errorMessage = "Не удалось определить город"
-                self.isLoading = false
+        if #available(iOS 26.0, *),
+           let request = MKReverseGeocodingRequest(location: location) {
+            request.preferredLocale = Locale(identifier: "ru_RU")
+
+            Task {
+                do {
+                    let mapItems = try await request.mapItems
+                    await MainActor.run {
+                        if let mapItem = mapItems.first,
+                           let cityName = mapItem.addressRepresentations?.cityName {
+                            self.setCity(cityName)
+                        } else {
+                            self.errorMessage = "Город не определён"
+                            self.isLoading = false
+                        }
+                    }
+                } catch {
+                    print("Geocode error: \(error.localizedDescription)")
+                    self.reverseGeocodeWithCLGeocoder(location)
+                }
             }
             return
         }
-        request.preferredLocale = Locale(identifier: "ru_RU")
 
-        Task {
-            do {
-                let mapItems = try await request.mapItems
-                await MainActor.run {
-                    if let mapItem = mapItems.first,
-                       let cityName = mapItem.addressRepresentations?.cityName {
-                        self.setCity(cityName)
-                    } else {
-                        self.errorMessage = "Город не определён"
-                        self.isLoading = false
-                    }
-                }
-            } catch {
-                print("Geocode error: \(error.localizedDescription)")
-                await MainActor.run {
+        reverseGeocodeWithCLGeocoder(location)
+    }
+
+    private func reverseGeocodeWithCLGeocoder(_ location: CLLocation) {
+        geocoder.reverseGeocodeLocation(location, preferredLocale: Locale(identifier: "ru_RU")) { placemarks, error in
+            DispatchQueue.main.async {
+                if let error {
+                    print("CLGeocoder error: \(error.localizedDescription)")
                     self.errorMessage = "Не удалось определить город"
+                    self.isLoading = false
+                    return
+                }
+
+                if let placemark = placemarks?.first,
+                   let cityName = placemark.locality ?? placemark.subAdministrativeArea ?? placemark.administrativeArea {
+                    self.setCity(cityName)
+                } else {
+                    self.errorMessage = "Город не определён"
                     self.isLoading = false
                 }
             }
