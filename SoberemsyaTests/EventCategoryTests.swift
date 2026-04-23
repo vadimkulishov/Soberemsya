@@ -2,6 +2,7 @@ import Testing
 import Foundation
 @testable import Soberemsya
 
+@MainActor
 @Suite("EventCategory Tests")
 struct EventCategoryTests {
 

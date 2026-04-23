@@ -2,6 +2,7 @@ import Testing
 import Foundation
 @testable import Soberemsya
 
+@MainActor
 @Suite("Registration Model Tests")
 struct RegistrationTests {
 

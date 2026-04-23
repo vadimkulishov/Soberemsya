@@ -2,6 +2,7 @@ import Testing
 import SwiftUI
 @testable import Soberemsya
 
+@MainActor
 @Suite("AppTheme Tests")
 struct AppThemeTests {
 

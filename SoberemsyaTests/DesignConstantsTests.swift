@@ -2,6 +2,7 @@ import Testing
 import SwiftUI
 @testable import Soberemsya
 
+@MainActor
 @Suite("DesignConstants Tests")
 struct DesignConstantsTests {
 

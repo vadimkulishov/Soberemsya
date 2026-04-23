@@ -2,6 +2,7 @@ import Testing
 import Foundation
 @testable import Soberemsya
 
+@MainActor
 @Suite("SearchViewModel Tests")
 struct SearchViewModelTests {
 
