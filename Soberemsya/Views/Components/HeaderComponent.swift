@@ -43,7 +43,7 @@ struct HeaderComponent: View {
                 
                 // Приветствие
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("События")
+                    Text("Соберёмся?")
                         .font(DesignConstants.Typography.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(DesignConstants.Colors.textPrimary)
