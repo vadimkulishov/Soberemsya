@@ -37,8 +37,13 @@ jobs:
 
     - name: Create simulator
       run: |
-        RUNTIME=$(xcrun simctl list runtimes | grep 'com.apple.CoreSimulator.SimRuntime.iOS' | tail -1 | sed -E 's/.*\(([^)]+)\).*/\1/')
-        echo "Using runtime: $RUNTIME"
+        RUNTIME=$(xcrun simctl list runtimes available | grep 'com.apple.CoreSimulator.SimRuntime.iOS' | tail -1 | awk -F ' - ' '{print $NF}')
+        if [ -z "$RUNTIME" ]; then
+          echo "No available iOS simulator runtime found"
+          xcrun simctl list runtimes
+          exit 1
+        fi
+        echo "Using runtime id: $RUNTIME"
         SIMULATOR_NAME="CI_iPhone_${GITHUB_RUN_ID}"
         SIMULATOR_ID=$(xcrun simctl create "$SIMULATOR_NAME" "com.apple.CoreSimulator.SimDeviceType.iPhone-16" "$RUNTIME")
         xcrun simctl boot "$SIMULATOR_ID" || true
