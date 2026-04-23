@@ -5,14 +5,14 @@
 <h1 align="center">Соберёмся</h1>
 
 <p align="center">
-  <strong>Мобильное приложение для поиска и организации мероприятий в твоём городе</strong>
+  <strong>iOS и Apple Watch приложение для поиска и организации мероприятий в твоём городе</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Swift-5.9+-F05138?style=flat&logo=swift&logoColor=white" alt="Swift 5.9+" />
-  <img src="https://img.shields.io/badge/iOS-17.0+-000000?style=flat&logo=apple&logoColor=white" alt="iOS 17.0+" />
+  <img src="https://img.shields.io/badge/iOS-18.0+-000000?style=flat&logo=apple&logoColor=white" alt="iOS 18.0+" />
   <img src="https://img.shields.io/badge/SwiftUI-Framework-0071E3?style=flat&logo=swift&logoColor=white" alt="SwiftUI" />
-  <img src="https://img.shields.io/badge/watchOS-10.0+-000000?style=flat&logo=apple&logoColor=white" alt="watchOS 10.0+" />
+  <img src="https://img.shields.io/badge/watchOS-11.0+-000000?style=flat&logo=apple&logoColor=white" alt="watchOS 11.0+" />
   <img src="https://img.shields.io/badge/Xcode-16+-1575F9?style=flat&logo=xcode&logoColor=white" alt="Xcode 16+" />
   <img src="https://img.shields.io/badge/Architecture-MVVM-blueviolet?style=flat" alt="MVVM" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License MIT" />
@@ -22,7 +22,13 @@
 
 ## 📱 О проекте
 
-**Соберёмся** — это нативное iOS-приложение для поиска, создания и управления мероприятиями. Приложение позволяет находить события поблизости, регистрироваться на них, сканировать QR-билеты и управлять своими мероприятиями. Дизайн выполнен в стиле Apple Health — минималистичный, чистый и с приятными анимациями.
+**Соберёмся** — это нативное iOS-приложение с companion-приложением для Apple Watch. Оно позволяет находить события поблизости, регистрироваться на них, сканировать QR-билеты и управлять своими мероприятиями. Дизайн выполнен в стиле Apple Health — минималистичный, чистый и с приятными анимациями.
+
+Этот репозиторий теперь содержит только клиентское приложение. Серверная часть и web/admin-панель вынесены в отдельные репозитории:
+
+- `Soberemsya` — iOS + watchOS app
+- `Soberemsya-backend` — FastAPI backend
+- `Soberemsya-web` — web/admin panel
 
 ### Ключевые возможности
 
@@ -227,7 +233,7 @@ Soberemsya Watch App Watch App/
 
 ## 📡 API
 
-Приложение подключается к REST API серверу. Конфигурация автоматически определяет окружение:
+Приложение подключается к отдельному REST API серверу из репозитория `Soberemsya-backend`. Конфигурация автоматически определяет окружение:
 
 | Окружение | URL |
 |:---|:---|
@@ -304,8 +310,8 @@ Companion-приложение для Apple Watch позволяет отобр�
 
 - macOS 15.0+
 - Xcode 16+
-- iOS 17.0+ (для запуска на устройстве/симуляторе)
-- watchOS 10.0+ (для Watch App)
+- iOS 18.0+ (для запуска на устройстве/симуляторе)
+- watchOS 11.0+ (для Watch App)
 
 ### Шаги
 
@@ -324,12 +330,7 @@ Companion-приложение для Apple Watch позволяет отобр�
 
 4. Нажмите **⌘R** для сборки и запуска.
 
-5. *(Опционально)* Для работы с бэкендом — запустите сервер из папки `backend/`:
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   uvicorn main:app --host 0.0.0.0 --port 8002
-   ```
+5. Для полноценной работы приложения поднимите backend из отдельного репозитория `Soberemsya-backend`.
 
 ---
 
