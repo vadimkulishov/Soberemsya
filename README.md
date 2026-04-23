@@ -4,7 +4,11 @@
 
 <h1 align="center">Соберёмся</h1>
 
-[url=https://ibb.co/nq2Zc3Ms][img]https://i.ibb.co/MyTWV8kD/Simulator-Screenshot-i-Phone-17-2026-04-23-at-23-10-06.jpg[/img][/url]
+<p align="center">
+  <a href="https://ibb.co/nq2Zc3Ms">
+    <img src="https://i.ibb.co/MyTWV8kD/Simulator-Screenshot-i-Phone-17-2026-04-23-at-23-10-06.jpg" width="300" />
+  </a>
+</p>
 
 <p align="center">
   <strong>iOS и Apple Watch приложение для поиска и организации мероприятий в твоём городе</strong>
