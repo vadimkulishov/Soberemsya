@@ -26,9 +26,9 @@
 
 Этот репозиторий теперь содержит только клиентское приложение. Серверная часть и web/admin-панель вынесены в отдельные репозитории:
 
-- `Soberemsya` — iOS + watchOS app
-- `Soberemsya-backend` — FastAPI backend
-- `Soberemsya-web` — web/admin panel
+- [Soberemsya](https://github.com/vadimkulishov/Soberemsya) — iOS + watchOS app
+- [Soberemsya-backend](https://github.com/vadimkulishov/Soberemsya-backend) — FastAPI backend
+- [Soberemsya-web](https://github.com/vadimkulishov/Soberemsya-web) — web/admin panel
 
 ### Ключевые возможности
 
@@ -233,7 +233,7 @@ Soberemsya Watch App Watch App/
 
 ## 📡 API
 
-Приложение подключается к отдельному REST API серверу из репозитория `Soberemsya-backend`. Конфигурация автоматически определяет окружение:
+Приложение подключается к отдельному REST API серверу из репозитория [Soberemsya-backend](https://github.com/vadimkulishov/Soberemsya-backend). Конфигурация автоматически определяет окружение:
 
 | Окружение | URL |
 |:---|:---|
@@ -330,7 +330,7 @@ Companion-приложение для Apple Watch позволяет отобр�
 
 4. Нажмите **⌘R** для сборки и запуска.
 
-5. Для полноценной работы приложения поднимите backend из отдельного репозитория `Soberemsya-backend`.
+5. Для полноценной работы приложения поднимите backend из отдельного репозитория [Soberemsya-backend](https://github.com/vadimkulishov/Soberemsya-backend).
 
 ---
 
