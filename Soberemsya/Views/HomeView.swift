@@ -8,6 +8,7 @@ struct HomeView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var showCityPicker = false
     @State private var bannersAppeared = false
+    @State private var selectedPromo: PromoItem?
     
     var body: some View {
         NavigationStack {
@@ -43,6 +44,9 @@ struct HomeView: View {
                     showCityPicker = false
                 }
             }
+            .sheet(item: $selectedPromo) { promo in
+                PromoDetailView(promo: promo)
+            }
             .onAppear {
                 // Запрос геолокации при первом показе
                 if locationManager.authorizationStatus == .notDetermined {
@@ -62,7 +66,7 @@ struct HomeView: View {
                 .padding(.horizontal, DesignConstants.padding)
 
             AutoScrollPromoView(promos: viewModel.promos) { promo in
-                print("Tapped promo: \(promo.title)")
+                selectedPromo = promo
             }
         }
         .opacity(bannersAppeared ? 1 : 0)
@@ -207,4 +211,3 @@ struct SkeletonEventCard: View {
     HomeView()
         .environment(\.locale, .init(identifier: "ru"))
 }
-

@@ -3,6 +3,7 @@ import SwiftUI
 struct PromoShowcaseView: View {
     @StateObject private var promoManager = PromoManager.shared
     @Environment(\.colorScheme) var colorScheme
+    @State private var selectedPromo: PromoItem?
     
     var body: some View {
         NavigationStack {
@@ -24,6 +25,9 @@ struct PromoShowcaseView: View {
             .background(DesignConstants.Colors.mainBackground(colorScheme: colorScheme))
             .navigationTitle("Промо блоки")
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(item: $selectedPromo) { promo in
+                PromoDetailView(promo: promo)
+            }
         }
     }
     
@@ -37,7 +41,7 @@ struct PromoShowcaseView: View {
                 HStack(spacing: 16) {
                     ForEach(promoManager.activePromos) { promo in
                         PromoCardComponent(promo: promo) {
-                            print("Нажато: \(promo.title)")
+                            selectedPromo = promo
                         }
                         .frame(width: 300)
                     }
@@ -55,7 +59,7 @@ struct PromoShowcaseView: View {
             
             ForEach(promoManager.activePromos) { promo in
                 CompactPromoCardComponent(promo: promo) {
-                    print("Нажато: \(promo.title)")
+                    selectedPromo = promo
                 }
                 .padding(.horizontal)
             }

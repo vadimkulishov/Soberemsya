@@ -156,3 +156,115 @@ struct AsyncImageView: View {
         }
     }
 }
+
+enum EventImageResolver {
+    static func resolvedURL(from imagePath: String?, category: String) -> URL? {
+        let source = normalizedSource(imagePath, category: category)
+        return URL(string: source.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) ?? source)
+    }
+
+    private static func normalizedSource(_ imagePath: String?, category: String) -> String {
+        let fallback = DesignConstants.categoryFallbackImageUrl(for: category)
+        guard let imagePath, !imagePath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return fallback
+        }
+
+        let trimmed = imagePath.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://") {
+            return trimmed
+        }
+
+        let baseURL = AppConfig.shared.baseURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        let path = trimmed.hasPrefix("/") ? trimmed : "/\(trimmed)"
+        return "\(baseURL)\(path)"
+    }
+}
+
+struct EventImageView: View {
+    let imagePath: String?
+    let category: String
+    let height: CGFloat
+    var cornerRadius: CGFloat = 0
+    var overlayStrength: Double = 0.35
+    var preferCategoryImage: Bool = false
+
+    var body: some View {
+        ZStack {
+            CategoryArtworkView(category: category)
+
+            AsyncImage(url: imageURL) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .transition(.opacity.animation(.easeInOut(duration: 0.2)))
+                case .failure:
+                    CategoryArtworkView(category: category)
+                case .empty:
+                    CategoryArtworkView(category: category)
+                        .overlay {
+                            ProgressView()
+                                .tint(.white)
+                        }
+                @unknown default:
+                    CategoryArtworkView(category: category)
+                }
+            }
+
+            LinearGradient(
+                colors: [
+                    .black.opacity(0.04),
+                    .black.opacity(overlayStrength)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: height)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .clipped()
+    }
+
+    private var imageURL: URL? {
+        if preferCategoryImage {
+            return EventImageResolver.resolvedURL(from: nil, category: category)
+        }
+
+        return EventImageResolver.resolvedURL(from: imagePath, category: category)
+    }
+}
+
+struct CategoryArtworkView: View {
+    let category: String
+
+    private var categoryColor: Color {
+        DesignConstants.Colors.categoryColor(for: category)
+    }
+
+    var body: some View {
+        ZStack {
+            DesignConstants.Colors.categoryGradient(for: category)
+
+            Image(systemName: DesignConstants.categoryIcon(for: category))
+                .font(.system(size: 82, weight: .semibold))
+                .foregroundColor(.white.opacity(0.24))
+                .offset(x: 96, y: -34)
+
+            Image(systemName: "sparkles")
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundColor(.white.opacity(0.2))
+                .offset(x: -104, y: 54)
+
+            LinearGradient(
+                colors: [
+                    categoryColor.opacity(0.15),
+                    .white.opacity(0.08)
+                ],
+                startPoint: .bottomLeading,
+                endPoint: .topTrailing
+            )
+        }
+    }
+}

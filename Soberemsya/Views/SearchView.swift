@@ -18,21 +18,28 @@ struct SearchView: View {
                 DesignConstants.Colors.mainBackground(colorScheme: colorScheme).ignoresSafeArea()
                 
                 ScrollView(showsIndicators: false) {
-                    LazyVGrid(columns: columns, spacing: DesignConstants.spacing) {
-                        ForEach(Array(EventCategory.allCategories.enumerated()), id: \.element.id) { index, category in
-                            Button(action: {
-                                selectedCategory = category
-                            }) {
-                                CategoryCardComponent(category: category)
+                    VStack(alignment: .leading, spacing: DesignConstants.padding) {
+                        if viewModel.filteredCategories.isEmpty {
+                            SearchEmptyState(query: viewModel.query)
+                                .padding(.top, 72)
+                        } else {
+                            LazyVGrid(columns: columns, spacing: DesignConstants.spacing) {
+                                ForEach(Array(viewModel.filteredCategories.enumerated()), id: \.element.id) { index, category in
+                                    Button(action: {
+                                        selectedCategory = category
+                                    }) {
+                                        CategoryCardComponent(category: category)
+                                    }
+                                    .buttonStyle(PressableCardButtonStyle(pressedScale: 0.96))
+                                    .opacity(categoriesAppeared ? 1 : 0)
+                                    .offset(y: categoriesAppeared ? 0 : 20)
+                                    .animation(
+                                        .spring(response: 0.4, dampingFraction: 0.75)
+                                            .delay(Double(index) * 0.05),
+                                        value: categoriesAppeared
+                                    )
+                                }
                             }
-                            .buttonStyle(PressableCardButtonStyle(pressedScale: 0.96))
-                            .opacity(categoriesAppeared ? 1 : 0)
-                            .offset(y: categoriesAppeared ? 0 : 20)
-                            .animation(
-                                .spring(response: 0.4, dampingFraction: 0.75)
-                                    .delay(Double(index) * 0.05),
-                                value: categoriesAppeared
-                            )
                         }
                     }
                     .padding(DesignConstants.padding)
@@ -48,7 +55,7 @@ struct SearchView: View {
             .navigationDestination(item: $selectedCategory) { category in
                 CategoryDetailView(category: category)
             }
-            .searchable(text: $viewModel.query, prompt: "Поиск категорий")
+            .searchable(text: $viewModel.query, prompt: "Музыка, спорт, кино...")
             .onChange(of: viewModel.query) {
                 viewModel.updateFilteredCategories()
             }
@@ -75,33 +82,35 @@ struct CategoryDetailView: View {
                 VStack(spacing: DesignConstants.sectionSpacing) {
                     // Карточка категории
                     VStack(spacing: DesignConstants.padding) {
-                        // Иконка
                         ZStack {
-                            Circle()
-                                .fill(categoryColor.opacity(0.15))
-                                .frame(width: 100, height: 100)
-                            
+                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                .fill(categoryColor.opacity(0.14))
+                                .frame(width: 92, height: 92)
+
                             Image(systemName: category.icon)
-                                .font(.system(size: 44, weight: .medium))
+                                .font(.system(size: 42, weight: .semibold))
                                 .foregroundColor(categoryColor)
                         }
-                        
-                        // Название
-                        Text(category.title)
-                            .font(DesignConstants.Typography.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(DesignConstants.Colors.textPrimary)
-                        
-                        // Описание
-                        Text("Мероприятия категории \(category.title)")
-                            .font(DesignConstants.Typography.subheadline)
-                            .foregroundColor(DesignConstants.Colors.textSecondary)
-                            .multilineTextAlignment(.center)
+
+                        VStack(spacing: 6) {
+                            Text(category.title)
+                                .font(DesignConstants.Typography.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(DesignConstants.Colors.textPrimary)
+
+                            Text("Мероприятия этой категории")
+                                .font(DesignConstants.Typography.subheadline)
+                                .foregroundColor(DesignConstants.Colors.textSecondary)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(DesignConstants.largePadding)
                     .background(DesignConstants.Colors.cardBackground(colorScheme: colorScheme))
                     .clipShape(RoundedRectangle(cornerRadius: DesignConstants.cornerRadius, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignConstants.cornerRadius, style: .continuous)
+                            .strokeBorder(categoryColor.opacity(0.18), lineWidth: 1)
+                    )
                     .shadow(
                         color: DesignConstants.Shadows.card.color,
                         radius: DesignConstants.Shadows.card.radius,
@@ -162,6 +171,27 @@ struct CategoryDetailView: View {
         .onAppear {
             eventService.loadEventsByCategory(category.title)
         }
+    }
+}
+
+private struct SearchEmptyState: View {
+    let query: String
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 40, weight: .medium))
+                .foregroundColor(DesignConstants.Colors.textTertiary)
+
+            Text("Ничего не найдено")
+                .font(DesignConstants.Typography.headline)
+                .foregroundColor(DesignConstants.Colors.textPrimary)
+
+            Text(query.isEmpty ? "Категории появятся здесь" : "Попробуйте другой запрос")
+                .font(DesignConstants.Typography.subheadline)
+                .foregroundColor(DesignConstants.Colors.textSecondary)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 

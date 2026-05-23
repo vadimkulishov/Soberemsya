@@ -57,11 +57,11 @@ struct DesignConstants {
         
         // MARK: - Функции для адаптивных цветов
         
-        /// Основной фон приложения (белый в светлой теме, серый в тёмной)
+        /// Основной фон приложения
         static func mainBackground(colorScheme: ColorScheme) -> Color {
             colorScheme == .dark 
                 ? Color(.systemGroupedBackground)
-                : Color.white
+                : Color(red: 0.97, green: 0.98, blue: 0.99)
         }
         
         /// Фон карточки (как в Health)
@@ -119,31 +119,45 @@ struct DesignConstants {
         }
     }
 
-    /// Фолбэк-изображение по категории (Unsplash CDN)
+    /// Фолбэк-изображение по категории из локального backend.
     static func categoryFallbackImageUrl(for category: String) -> String {
-        let base = "https://images.unsplash.com/"
-        let params = "?w=800&h=500&fit=crop&crop=entropy&auto=format&q=85"
+        let base = AppConfig.shared.baseURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         switch category.lowercased() {
         case "музыка":
-            return "\(base)photo-1493225457124-a3eb161ffa5f\(params)"
+            return "\(base)/static/images/placeholder-1.jpg"
         case "спорт":
-            return "\(base)photo-1571019613454-1cb2f99b2d8b\(params)"
+            return "\(base)/static/images/placeholder-2.jpg"
         case "театр":
-            return "\(base)photo-1507003211169-0a1dd7228f2d\(params)"
+            return "\(base)/static/images/placeholder-3.jpg"
         case "кино":
-            return "\(base)photo-1536440136628-849c177e76a1\(params)"
+            return "\(base)/static/images/placeholder-4.jpg"
         case "образование":
-            return "\(base)photo-1523050854058-8df90110c9f1\(params)"
+            return "\(base)/static/images/placeholder-5.jpg"
         case "еда", "кулинария":
-            return "\(base)photo-1414235077428-338989a2e8c0\(params)"
+            return "\(base)/static/images/placeholder-6.jpg"
         case "путешествия":
-            return "\(base)photo-1488646953014-85cb44e25828\(params)"
+            return "\(base)/static/images/placeholder-7.jpg"
         case "технологии", "технология", "it":
-            return "\(base)photo-1518770660439-4636190af475\(params)"
+            return "\(base)/static/images/placeholder-8.jpg"
         case "искусство", "культура":
-            return "\(base)photo-1541961017774-22349e4a1262\(params)"
+            return "\(base)/static/images/placeholder-3.jpg"
         default:
-            return "\(base)photo-1492684223066-81342ee5ff30\(params)"
+            return "\(base)/static/images/placeholder-1.jpg"
+        }
+    }
+
+    static func categoryIcon(for category: String) -> String {
+        switch category.lowercased() {
+        case "музыка": return "music.note"
+        case "спорт": return "figure.run"
+        case "театр": return "theatermasks.fill"
+        case "кино": return "film.fill"
+        case "образование": return "graduationcap.fill"
+        case "искусство", "культура": return "paintpalette.fill"
+        case "технологии", "технология", "it": return "desktopcomputer"
+        case "еда", "кулинария": return "fork.knife"
+        case "природа", "путешествия": return "map.fill"
+        default: return "star.fill"
         }
     }
     

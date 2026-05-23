@@ -57,76 +57,34 @@ struct RegisterView: View {
     // MARK: - QR Section
 
     private var qrSection: some View {
-        VStack(spacing: 16) {
-            if let token = ticketViewModel.qrToken {
-                VStack(spacing: 16) {
-                    // QR Code
-                    QRCodeView(data: token.token)
-                        .frame(width: 200, height: 200)
-                        .padding(16)
-                        .background(Color.white)
-                        .cornerRadius(DesignConstants.cornerRadius)
+        VStack(spacing: 12) {
+            QRCodeHeroCard(
+                colorScheme: colorScheme,
+                token: ticketViewModel.qrToken,
+                title: "Билет и QR",
+                subtitle: "Покажите код организатору или на входе в мероприятие."
+            )
 
-                    Text("Покажите код при входе на мероприятие")
-                        .font(.system(size: 13))
-                        .foregroundColor(DesignConstants.Colors.textSecondary)
-                        .multilineTextAlignment(.center)
-
-                    // Expiration
-                    if !token.expiresAt.isEmpty {
-                        HStack(spacing: 6) {
-                            Image(systemName: "clock")
-                                .font(.system(size: 12))
-                            Text("до \(formatDate(token.expiresAt))")
-                                .font(.system(size: 12))
-                        }
-                        .foregroundColor(DesignConstants.Colors.textTertiary)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-                        .cornerRadius(20)
-                    }
-
-                    // Actions
-                    HStack(spacing: 10) {
-                        Button(action: copyToken) {
-                            Label("Скопировать", systemImage: "doc.on.doc")
-                                .font(.system(size: 13, weight: .medium))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(DesignConstants.Colors.primary.opacity(0.1))
-                                .foregroundColor(DesignConstants.Colors.primary)
-                                .cornerRadius(DesignConstants.smallCornerRadius)
-                        }
-
-                        Button(action: { ticketViewModel.generateQRCode() }) {
-                            Label("Обновить", systemImage: "arrow.clockwise")
-                                .font(.system(size: 13, weight: .medium))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(DesignConstants.Colors.primary.opacity(0.1))
-                                .foregroundColor(DesignConstants.Colors.primary)
-                                .cornerRadius(DesignConstants.smallCornerRadius)
-                        }
-                    }
+            HStack(spacing: 10) {
+                QRCodeActionButton(
+                    title: "Скопировать",
+                    icon: "doc.on.doc.fill",
+                    style: .secondary
+                ) {
+                    copyToken()
                 }
-                .padding(DesignConstants.largePadding)
-            } else {
-                VStack(spacing: 12) {
-                    ProgressView()
-                        .controlSize(.large)
-                    Text("Загрузка QR-кода...")
-                        .font(.system(size: 14))
-                        .foregroundColor(DesignConstants.Colors.textSecondary)
+
+                QRCodeActionButton(
+                    title: "Обновить",
+                    icon: "arrow.clockwise",
+                    style: .secondary
+                ) {
+                    ticketViewModel.generateQRCode()
                 }
-                .frame(height: 280)
-                .frame(maxWidth: .infinity)
             }
         }
-        .frame(maxWidth: .infinity)
-        .background(DesignConstants.Colors.cardBackground(colorScheme: colorScheme))
-        .cornerRadius(DesignConstants.largeCornerRadius)
-        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+        .disabled(ticketViewModel.qrToken == nil)
+        .opacity(ticketViewModel.qrToken == nil ? 0.92 : 1)
     }
 
     // MARK: - Tickets Section

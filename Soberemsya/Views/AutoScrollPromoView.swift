@@ -8,13 +8,13 @@ struct AutoScrollPromoView: View {
     @State private var timer: Timer?
     @GestureState private var dragOffset: CGFloat = 0
     
-    private let cardWidth: CGFloat = 300
     private let cardSpacing: CGFloat = 16
     private let autoScrollInterval: TimeInterval = 4.0
     
     var body: some View {
         VStack(spacing: 12) {
             GeometryReader { geometry in
+                let cardWidth = max(260, geometry.size.width - (DesignConstants.padding * 2) - 20)
                 let totalWidth = cardWidth + cardSpacing
                 let offset = -CGFloat(currentIndex) * totalWidth + dragOffset
                 
@@ -46,7 +46,7 @@ struct AutoScrollPromoView: View {
                         }
                 )
             }
-            .frame(height: 200)
+            .frame(height: 188)
             
             PageIndicator(currentPage: currentIndex, pageCount: promos.count)
                 .padding(.horizontal, DesignConstants.padding)

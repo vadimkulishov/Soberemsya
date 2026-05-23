@@ -26,6 +26,12 @@ struct PromoCardComponent: View {
                     endPoint: .bottomTrailing
                 )
                 .opacity(colorScheme == .dark ? 0.8 : 1.0)
+
+                LinearGradient(
+                    colors: [.white.opacity(0.18), .clear, .black.opacity(0.12)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
                 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
@@ -55,26 +61,18 @@ struct PromoCardComponent: View {
                     }
                 }
                 .padding(20)
-                
-                Circle()
-                    .fill(.white.opacity(0.08))
-                    .frame(width: 140, height: 140)
-                    .offset(x: 80, y: -60)
-                    .blur(radius: 20)
-                
-                Circle()
-                    .fill(.white.opacity(0.05))
-                    .frame(width: 100, height: 100)
-                    .offset(x: -70, y: 80)
-                    .blur(radius: 15)
             }
-            .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .frame(height: 188)
+            .clipShape(RoundedRectangle(cornerRadius: DesignConstants.largeCornerRadius, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignConstants.largeCornerRadius, style: .continuous)
+                    .strokeBorder(.white.opacity(colorScheme == .dark ? 0.08 : 0.22), lineWidth: 1)
+            )
             .shadow(
                 color: promo.accentColor.opacity(colorScheme == .dark ? 0.3 : 0.25),
-                radius: isPressed ? 8 : 15,
+                radius: isPressed ? 8 : 12,
                 x: 0,
-                y: isPressed ? 3 : 8
+                y: isPressed ? 3 : 7
             )
             .scaleEffect(isPressed ? 0.97 : 1.0)
         }

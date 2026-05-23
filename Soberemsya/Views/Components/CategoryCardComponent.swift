@@ -12,25 +12,24 @@ struct CategoryCardComponent: View {
     
     var cardContent: some View {
         VStack(alignment: .leading, spacing: DesignConstants.spacing) {
-            // Иконка
             ZStack {
-                Circle()
-                    .fill(color.opacity(0.15))
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(color.opacity(0.14))
                     .frame(width: 56, height: 56)
-                
+
                 Image(systemName: category.icon)
-                    .font(.system(size: 26, weight: .medium))
+                    .font(.system(size: 25, weight: .semibold))
                     .foregroundColor(color)
             }
-            
+
             Spacer()
-            
-            // Название категории
-            VStack(alignment: .leading, spacing: 4) {
+
+            VStack(alignment: .leading, spacing: 5) {
                 Text(category.title)
                     .font(DesignConstants.Typography.headline)
                     .foregroundColor(DesignConstants.Colors.textPrimary)
-                
+                    .lineLimit(1)
+
                 Label {
                     Text("События")
                         .font(DesignConstants.Typography.caption)

@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct AuthenticationView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var authManager = AuthManager.shared
+
     @State private var isLogin = true
     @State private var email = ""
     @State private var password = ""
@@ -11,399 +12,330 @@ struct AuthenticationView: View {
     @State private var city = "Москва"
     @State private var showPassword = false
     @State private var showConfirmPassword = false
-    @State private var selectedCity: String?
-    @State private var cities: [String] = ["Москва", "СПб", "Казань", "Новосибирск"]
-    
+
+    private let cities = ["Москва", "СПб", "Казань", "Новосибирск"]
+
     var body: some View {
         NavigationStack {
-            ZStack {
-                DesignConstants.Colors.mainBackground(colorScheme: colorScheme).ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // Header
-                        headerSection
-                        
-                        // Tab Switcher
-                        tabSwitcher
-                        
-                        // Form Content
-                        if isLogin {
-                            loginForm
-                        } else {
-                            registerForm
-                        }
-                        
-                        // Submit Button
-                        submitButton
-                        
-                        Spacer()
-                    }
-                    .padding(16)
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    topIntro
+                    authSwitcher
+                    formShell
+                    submitBlock
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 18)
+                .padding(.bottom, 28)
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .background(backgroundLayer)
+            .navigationBarHidden(true)
         }
     }
-    
-    // MARK: - Header Section
-    
-    var headerSection: some View {
-        VStack(spacing: 16) {
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        DesignConstants.Colors.primary,
-                        DesignConstants.Colors.primary.opacity(0.7)
-                    ]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                
-                VStack(spacing: 12) {
-                    Image(systemName: isLogin ? "lock.open" : "pencil.and.ellipsis.rectangle")
-                        .font(.system(size: 48))
+
+    private var backgroundLayer: some View {
+        ZStack {
+            DesignConstants.Colors.mainBackground(colorScheme: colorScheme).ignoresSafeArea()
+
+            LinearGradient(
+                colors: [
+                    Color(red: 0.96, green: 0.56, blue: 0.42).opacity(colorScheme == .dark ? 0.16 : 0.10),
+                    Color.clear,
+                    Color(red: 0.94, green: 0.78, blue: 0.52).opacity(colorScheme == .dark ? 0.10 : 0.07)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+        }
+    }
+
+    private var topIntro: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Soberemsya")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(accentColor)
+
+                    Text(isLogin ? "Вход в аккаунт" : "Создание аккаунта")
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundColor(DesignConstants.Colors.textPrimary)
+
+                    Text(isLogin ? "Вернитесь к билетам, событиям и регистрациям." : "Зарегистрируйтесь и сохраняйте все билеты в одном месте.")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(DesignConstants.Colors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 12)
+
+                ZStack {
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(accentGradient)
+                        .frame(width: 74, height: 74)
+
+                    Image(systemName: isLogin ? "person.crop.circle.fill.badge.checkmark" : "person.badge.plus.fill")
+                        .font(.system(size: 28, weight: .semibold))
                         .foregroundColor(.white)
-                    
-                    VStack(spacing: 6) {
-                        Text(isLogin ? "Добро пожаловать!" : "Создайте аккаунт")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.white)
-                        
-                        Text(isLogin ? 
-                            "Введите учетные данные для входа" :
-                            "Заполните форму для регистрации")
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.white.opacity(0.9))
-                            .multilineTextAlignment(.center)
-                    }
                 }
-                .padding(24)
             }
-            .frame(height: 200)
-            .cornerRadius(20)
-            .shadow(color: DesignConstants.Colors.primary.opacity(0.3), radius: 12, x: 0, y: 8)
+
+            HStack(spacing: 10) {
+                introChip(icon: "ticket.fill", text: "Билеты")
+                introChip(icon: "sparkles", text: "События")
+                introChip(icon: "qrcode", text: "QR")
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(22)
+        .background(
+            RoundedRectangle(cornerRadius: 30, style: .continuous)
+                .fill(DesignConstants.Colors.cardBackground(colorScheme: colorScheme))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 30, style: .continuous)
+                .strokeBorder(Color.white.opacity(colorScheme == .dark ? 0.07 : 0.75), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.14 : 0.05), radius: 14, x: 0, y: 6)
     }
-    
-    // MARK: - Tab Switcher
-    
-    var tabSwitcher: some View {
-        HStack(spacing: 12) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.3)) {
+
+    private var authSwitcher: some View {
+        HStack(spacing: 10) {
+            switcherButton(title: "Вход", subtitle: "У меня уже есть аккаунт", isActive: isLogin) {
+                withAnimation(.easeInOut(duration: 0.2)) {
                     isLogin = true
                     clearForm()
                 }
-            } label: {
-                HStack {
-                    Image(systemName: "lock.open")
-                    Text("Вход")
-                }
-                .frame(maxWidth: .infinity)
-                .padding(12)
-                .background(isLogin ? 
-                    AnyView(LinearGradient(
-                        gradient: Gradient(colors: [
-                            DesignConstants.Colors.primary,
-                            DesignConstants.Colors.primary.opacity(0.8)
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )) :
-                    AnyView(Color(UIColor.systemGray6))
-                )
-                .foregroundColor(isLogin ? .white : DesignConstants.Colors.textPrimary)
-                .cornerRadius(10)
             }
-            
-            Button {
-                withAnimation(.easeInOut(duration: 0.3)) {
+
+            switcherButton(title: "Регистрация", subtitle: "Я новый пользователь", isActive: !isLogin) {
+                withAnimation(.easeInOut(duration: 0.2)) {
                     isLogin = false
                     clearForm()
+                    city = "Москва"
                 }
-            } label: {
-                HStack {
-                    Image(systemName: "person.badge.plus")
-                    Text("Регистрация")
-                }
-                .frame(maxWidth: .infinity)
-                .padding(12)
-                .background(!isLogin ?
-                    AnyView(LinearGradient(
-                        gradient: Gradient(colors: [
-                            DesignConstants.Colors.primary,
-                            DesignConstants.Colors.primary.opacity(0.8)
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )) :
-                    AnyView(Color(UIColor.systemGray6))
-                )
-                .foregroundColor(!isLogin ? .white : DesignConstants.Colors.textPrimary)
-                .cornerRadius(10)
             }
         }
     }
-    
-    // MARK: - Login Form
-    
-    var loginForm: some View {
-        VStack(spacing: 12) {
-            // Email
-            HStack(spacing: 12) {
-                Image(systemName: "envelope")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(DesignConstants.Colors.primary)
-                    .frame(width: 20, alignment: .center)
-                
-                TextField("Email", text: $email)
-                    .font(.system(size: 14))
-                    .keyboardType(.emailAddress)
-                    .textContentType(.emailAddress)
-                    .foregroundColor(DesignConstants.Colors.textPrimary)
-                    .autocorrectionDisabled()
-            }
-            .padding(12)
-            .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-            .cornerRadius(12)
-            
-            // Password
-            HStack(spacing: 12) {
-                Image(systemName: "lock")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(DesignConstants.Colors.primary)
-                    .frame(width: 20, alignment: .center)
-                
-                if showPassword {
-                    TextField("Пароль", text: $password)
-                        .font(.system(size: 14))
-                        .textContentType(.password)
-                        .foregroundColor(DesignConstants.Colors.textPrimary)
-                } else {
-                    SecureField("Пароль", text: $password)
-                        .font(.system(size: 14))
-                        .textContentType(.password)
-                        .foregroundColor(DesignConstants.Colors.textPrimary)
-                }
-                
-                Button {
-                    showPassword.toggle()
-                } label: {
-                    Image(systemName: showPassword ? "eye.slash" : "eye")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(DesignConstants.Colors.textSecondary)
-                }
-            }
-            .padding(12)
-            .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-            .cornerRadius(12)
-        }
-    }
-    
-    // MARK: - Register Form
-    
-    var registerForm: some View {
-        VStack(spacing: 12) {
-            // Email
-            HStack(spacing: 12) {
-                Image(systemName: "envelope")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(DesignConstants.Colors.primary)
-                    .frame(width: 20, alignment: .center)
-                
-                TextField("Email", text: $email)
-                    .font(.system(size: 14))
-                    .keyboardType(.emailAddress)
-                    .textContentType(.emailAddress)
-                    .foregroundColor(DesignConstants.Colors.textPrimary)
-                    .autocorrectionDisabled()
-            }
-            .padding(12)
-            .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-            .cornerRadius(12)
-            
-            // Username
-            HStack(spacing: 12) {
-                Image(systemName: "person")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(DesignConstants.Colors.primary)
-                    .frame(width: 20, alignment: .center)
-                
-                TextField("Имя пользователя", text: $username)
-                    .font(.system(size: 14))
-                    .textContentType(.username)
-                    .foregroundColor(DesignConstants.Colors.textPrimary)
-                    .autocorrectionDisabled()
-            }
-            .padding(12)
-            .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-            .cornerRadius(12)
-            
-            // City Picker
-            HStack(spacing: 12) {
-                Image(systemName: "mappin")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(DesignConstants.Colors.primary)
-                    .frame(width: 20, alignment: .center)
-                
-                Picker("Город", selection: $city) {
-                    ForEach(cities, id: \.self) { c in
-                        Text(c).tag(c)
-                    }
-                }
+
+    private var formShell: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(isLogin ? "Данные для входа" : "Заполните форму")
+                .font(DesignConstants.Typography.headline)
                 .foregroundColor(DesignConstants.Colors.textPrimary)
+
+            AuthInputCard(icon: "envelope.fill", title: "Email", colorScheme: colorScheme) {
+                TextField("example@mail.com", text: $email)
+                    .keyboardType(.emailAddress)
+                    .textContentType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
             }
-            .padding(12)
-            .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-            .cornerRadius(12)
-            
-            // Password
-            HStack(spacing: 12) {
-                Image(systemName: "lock")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(DesignConstants.Colors.primary)
-                    .frame(width: 20, alignment: .center)
-                
-                if showPassword {
-                    TextField("Пароль", text: $password)
-                        .font(.system(size: 14))
-                        .textContentType(.newPassword)
-                        .foregroundColor(DesignConstants.Colors.textPrimary)
-                } else {
-                    SecureField("Пароль", text: $password)
-                        .font(.system(size: 14))
-                        .textContentType(.newPassword)
-                        .foregroundColor(DesignConstants.Colors.textPrimary)
+
+            if !isLogin {
+                AuthInputCard(icon: "person.fill", title: "Имя пользователя", colorScheme: colorScheme) {
+                    TextField("Ваше имя", text: $username)
+                        .textContentType(.username)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                 }
-                
-                Button {
-                    showPassword.toggle()
-                } label: {
-                    Image(systemName: showPassword ? "eye.slash" : "eye")
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Город")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(DesignConstants.Colors.textSecondary)
-                }
-            }
-            .padding(12)
-            .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-            .cornerRadius(12)
-            
-            // Confirm Password
-            HStack(spacing: 12) {
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(DesignConstants.Colors.primary)
-                    .frame(width: 20, alignment: .center)
-                
-                if showConfirmPassword {
-                    TextField("Повторить пароль", text: $confirmPassword)
-                        .font(.system(size: 14))
-                        .textContentType(.newPassword)
-                        .foregroundColor(DesignConstants.Colors.textPrimary)
-                } else {
-                    SecureField("Повторить пароль", text: $confirmPassword)
-                        .font(.system(size: 14))
-                        .textContentType(.newPassword)
-                        .foregroundColor(DesignConstants.Colors.textPrimary)
-                }
-                
-                Button {
-                    showConfirmPassword.toggle()
-                } label: {
-                    Image(systemName: showConfirmPassword ? "eye.slash" : "eye")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(DesignConstants.Colors.textSecondary)
-                }
-            }
-            .padding(12)
-            .background(DesignConstants.Colors.inputBackground(colorScheme: colorScheme))
-            .cornerRadius(12)
-        }
-    }
-    
-    // MARK: - Submit Button
-    
-    var submitButton: some View {
-        Group {
-            if authManager.isLoading {
-                HStack {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                    Text(isLogin ? "Входим..." : "Регистрируемся...")
-                        .font(.system(size: 14, weight: .semibold))
-                }
-                .frame(maxWidth: .infinity)
-                .padding(14)
-                .background(DesignConstants.Colors.primary.opacity(0.5))
-                .foregroundColor(.white)
-                .cornerRadius(12)
-            } else {
-                Button {
-                    performAction()
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: isLogin ? "lock.open" : "checkmark.circle.fill")
-                        Text(isLogin ? "Войти" : "Создать аккаунт")
-                            .font(.system(size: 14, weight: .semibold))
+
+                    Picker("Город", selection: $city) {
+                        ForEach(cities, id: \.self) { currentCity in
+                            Text(currentCity).tag(currentCity)
+                        }
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(14)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                DesignConstants.Colors.primary,
-                                DesignConstants.Colors.primary.opacity(0.8)
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
+                    .pickerStyle(.menu)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 14)
+                    .background(inputBackground, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
-                .disabled(!isFormValid)
-                .opacity(isFormValid ? 1.0 : 0.5)
             }
-            
-            // Error Message
-            if let error = authManager.error {
-                HStack(spacing: 8) {
-                    Image(systemName: "exclamationmark.circle")
-                    Text(error.localizedDescription)
-                        .font(.system(size: 12, weight: .medium))
+
+            AuthInputCard(icon: "lock.fill", title: "Пароль", colorScheme: colorScheme) {
+                HStack(spacing: 10) {
+                    Group {
+                        if showPassword {
+                            TextField("Минимум 6 символов", text: $password)
+                        } else {
+                            SecureField("Минимум 6 символов", text: $password)
+                        }
+                    }
+                    .textContentType(isLogin ? .password : .newPassword)
+
+                    Button {
+                        showPassword.toggle()
+                    } label: {
+                        Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
+                            .foregroundColor(DesignConstants.Colors.textSecondary)
+                    }
+                }
+            }
+
+            if !isLogin {
+                AuthInputCard(icon: "checkmark.shield.fill", title: "Подтверждение пароля", colorScheme: colorScheme) {
+                    HStack(spacing: 10) {
+                        Group {
+                            if showConfirmPassword {
+                                TextField("Повторите пароль", text: $confirmPassword)
+                            } else {
+                                SecureField("Повторите пароль", text: $confirmPassword)
+                            }
+                        }
+                        .textContentType(.newPassword)
+
+                        Button {
+                            showConfirmPassword.toggle()
+                        } label: {
+                            Image(systemName: showConfirmPassword ? "eye.slash.fill" : "eye.fill")
+                                .foregroundColor(DesignConstants.Colors.textSecondary)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(DesignConstants.Colors.cardBackground(colorScheme: colorScheme))
+        )
+        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.12 : 0.04), radius: 12, x: 0, y: 5)
+    }
+
+    private var submitBlock: some View {
+        VStack(spacing: 12) {
+            Button {
+                performAction()
+            } label: {
+                HStack(spacing: 10) {
+                    if authManager.isLoading {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                    } else {
+                        Image(systemName: isLogin ? "arrow.right.circle.fill" : "sparkles")
+                            .font(.system(size: 16, weight: .semibold))
+                    }
+
+                    Text(buttonTitle)
+                        .font(.system(size: 16, weight: .semibold))
                 }
                 .frame(maxWidth: .infinity)
-                .padding(12)
-                .background(Color.red.opacity(0.1))
+                .padding(.vertical, 16)
+                .background(accentGradient, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                .foregroundColor(.white)
+                .shadow(color: accentColor.opacity(0.22), radius: 12, x: 0, y: 5)
+            }
+            .disabled(!isFormValid || authManager.isLoading)
+            .opacity((!isFormValid || authManager.isLoading) ? 0.6 : 1)
+
+            if let error = authManager.error {
+                HStack(spacing: 10) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text(error.localizedDescription)
+                        .font(.system(size: 13, weight: .medium))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(14)
+                .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .foregroundColor(.red)
-                .cornerRadius(8)
             }
         }
     }
-    
-    // MARK: - Helper Methods
-    
+
+    private func introChip(icon: String, text: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 11, weight: .semibold))
+            Text(text)
+                .font(.system(size: 12, weight: .semibold))
+        }
+        .foregroundColor(DesignConstants.Colors.textPrimary)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(inputBackground, in: Capsule())
+    }
+
+    private func switcherButton(title: String, subtitle: String, isActive: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(title)
+                    .font(.system(size: 15, weight: .semibold))
+                Text(subtitle)
+                    .font(.system(size: 11, weight: .medium))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(isActive ? accentGradient : LinearGradient(colors: [inputBackgroundColor, inputBackgroundColor], startPoint: .top, endPoint: .bottom))
+            )
+            .foregroundColor(isActive ? .white : DesignConstants.Colors.textPrimary)
+        }
+    }
+
+    private var accentColor: Color {
+        Color(red: 0.96, green: 0.47, blue: 0.32)
+    }
+
+    private var accentGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                accentColor,
+                Color(red: 0.98, green: 0.66, blue: 0.38)
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
+    private var inputBackgroundColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.03)
+    }
+
+    private var inputBackground: some ShapeStyle {
+        inputBackgroundColor
+    }
+
+    private var buttonTitle: String {
+        if authManager.isLoading {
+            return isLogin ? "Входим..." : "Создаём аккаунт..."
+        }
+        return isLogin ? "Войти в аккаунт" : "Создать аккаунт"
+    }
+
     private var isFormValid: Bool {
         if isLogin {
             return !email.isEmpty && !password.isEmpty
-        } else {
-            return !email.isEmpty && !username.isEmpty && !password.isEmpty && 
-                   !confirmPassword.isEmpty && password == confirmPassword && !city.isEmpty
         }
+
+        return !email.isEmpty &&
+            !username.isEmpty &&
+            !password.isEmpty &&
+            !confirmPassword.isEmpty &&
+            !city.isEmpty &&
+            password == confirmPassword
     }
-    
+
     private func clearForm() {
         email = ""
         password = ""
         confirmPassword = ""
         username = ""
-        city = ""
         showPassword = false
         showConfirmPassword = false
         authManager.error = nil
     }
-    
+
     private func performAction() {
         if isLogin {
             authManager.login(email: email, password: password)
@@ -414,6 +346,38 @@ struct AuthenticationView: View {
                 password: password,
                 fullName: username,
                 city: city
+            )
+        }
+    }
+}
+
+private struct AuthInputCard<Content: View>: View {
+    let icon: String
+    let title: String
+    let colorScheme: ColorScheme
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(DesignConstants.Colors.textSecondary)
+
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Color(red: 0.96, green: 0.47, blue: 0.32))
+                    .frame(width: 18)
+
+                content
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(DesignConstants.Colors.textPrimary)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 14)
+            .background(
+                (colorScheme == .dark ? Color.white.opacity(0.06) : Color.black.opacity(0.03)),
+                in: RoundedRectangle(cornerRadius: 18, style: .continuous)
             )
         }
     }

@@ -16,6 +16,11 @@ build/
 .swiftpm/
 Package.resolved
 
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
 # CocoaPods
 Pods/
 
